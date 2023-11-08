@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'edu.up.orionlabs'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.xerial:sqlite-jdbc:3.40.1.0'
+    implementation 'org.mongodb:mongodb-driver-sync:4.11.0'
+
+
+    testImplementation platform('org.junit:junit-bom:5.9.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
