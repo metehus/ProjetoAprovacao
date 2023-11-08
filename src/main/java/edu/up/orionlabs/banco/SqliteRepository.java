@@ -46,6 +46,7 @@ public class SqliteRepository implements Repository {
     public Disciplina addDisciplina(Aluno aluno, String nome, DisciplinaEnum tipoDisciplina, String nota) {
         Disciplina disciplina = new Disciplina();
         disciplina.alunoId = aluno.getId();
+        disciplina.alunoHashId = null;
         disciplina.nome = nome;
         disciplina.tipoDisciplina = tipoDisciplina;
         disciplina.alunoNota = nota;

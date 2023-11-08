@@ -1,5 +1,6 @@
 package edu.up.orionlabs.banco;
 
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -8,10 +9,12 @@ import edu.up.orionlabs.entity.Disciplina;
 import edu.up.orionlabs.entity.DisciplinaEnum;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class MongodbRepository implements Repository {
     private final MongoCollection<Document> alunosCollection;
     private final MongoCollection<Document> disciplinasCollection;
+    private ObjectId alunoHashId;
 
     public MongodbRepository(MongoDatabase database) {
         this.alunosCollection = database.getCollection("aluno");
@@ -20,20 +23,28 @@ public class MongodbRepository implements Repository {
 
     @Override
     public Aluno addAluno(String nome) {
-        Document alunoDocument = new Document("nome", nome);
-        alunosCollection.insertOne(alunoDocument);
+        try{
+            Document alunoDocument = new Document("nome", nome);
+            alunosCollection.insertOne(alunoDocument);
 
-        Aluno aluno = new Aluno();
-        aluno.setId(Integer.parseInt(alunoDocument.getObjectId("_id").toString()));
-        aluno.setNome(nome);
+            alunoHashId = alunoDocument.getObjectId("_id");
 
-        return aluno;
+            Aluno aluno = new Aluno();
+            aluno.setId(0);
+            aluno.setNome(nome);
+
+            return aluno;
+        } catch(MongoException ex){
+            System.err.println("Erro ao inserir aluno no MongoDB: " + ex.getMessage());
+            return null;
+        }
     }
 
     @Override
     public Disciplina addDisciplina(Aluno aluno, String nome, DisciplinaEnum tipoDisciplina, String nota) {
         Document disciplinaDocument = new Document();
         disciplinaDocument.append("alunoId", aluno.getId());
+        disciplinaDocument.append("alunoHashId", alunoHashId);
         disciplinaDocument.append("nomeDisciplina", nome);
         disciplinaDocument.append("tipoDisciplina", tipoDisciplina.toString());
         disciplinaDocument.append("alunoNota", nota);
@@ -49,8 +60,4 @@ public class MongodbRepository implements Repository {
         return disciplina;
     }
 
-    public void criarColecoes() {
-        // Não é necessário criar coleções explicitamente no MongoDB, elas são criadas dinamicamente quando você insere dados.
-        System.out.println("Coleções aluno e disciplina prontas para uso!");
-    }
 }
