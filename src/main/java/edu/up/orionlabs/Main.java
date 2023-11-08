@@ -16,6 +16,8 @@ public class Main {
 
         Aluno aluno = repository.addAluno("Joãozinho");
 
+        System.out.println("Log mongo: " + aluno);
+
         aluno = new TecnicoDecorator(aluno, "Java", 7.5f, repository);
         aluno = new TecnicoDecorator(aluno, "HTML", 2.5f, repository);
         aluno = new TecnicoDecorator(aluno, "CSS", 7.5f, repository);

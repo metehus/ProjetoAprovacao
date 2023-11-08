@@ -13,7 +13,7 @@ public class MongodbRepositoryFactory implements RepositoryFactory {
     public Repository criarRepositorio() {
         try {
             MongoClient client = MongoClients.create(connectionUri);
-            MongoDatabase database = client.getDatabase("banco");
+            MongoDatabase database = client.getDatabase("database");
 
 
             return new MongodbRepository(database);
